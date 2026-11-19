@@ -5,6 +5,8 @@ const AUTH_COOKIE = 'token'
 const CSRF_COOKIE = 'csrf_token'
 
 const isProd = () => process.env.NODE_ENV === 'production'
+/** Secure cookies need HTTPS. COOKIE_SECURE=false only for a plain-http install. */
+const secureCookies = () => isProd() && process.env.COOKIE_SECURE !== 'false'
 
 function getSecret() {
   const secret = process.env.JWT_SECRET
@@ -36,7 +38,7 @@ function verifyToken(token) {
 
 function cookieBase() {
   return {
-    secure: isProd(),
+    secure: secureCookies(),
     // Strict in production (same-site deployment); Lax in development so the Vite
     // dev server proxy and direct localhost access both work.
     sameSite: isProd() ? 'strict' : 'lax',

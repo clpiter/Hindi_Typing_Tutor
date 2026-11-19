@@ -17,7 +17,10 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware')
 function createApp() {
   const app = express()
   const isProd = process.env.NODE_ENV === 'production'
-  if (isProd) app.set('trust proxy', 1)
+  // behind a reverse proxy / load balancer (Render, Nginx, …) the client IP and
+  // https flag come from X-Forwarded-* headers
+  if (isProd) app.set('trust proxy', Number(process.env.TRUST_PROXY ?? 1))
+  const httpsSite = isProd && process.env.COOKIE_SECURE !== 'false'
   app.disable('x-powered-by')
 
   app.use(
@@ -31,6 +34,8 @@ function createApp() {
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
           connectSrc: ["'self'"],
+          // only ask browsers to upgrade to https when the site really is https
+          upgradeInsecureRequests: httpsSite ? [] : null,
         },
       },
     }),

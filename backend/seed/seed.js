@@ -3,7 +3,7 @@
  *   npm run seed            – upsert exercises (keeps users and progress)
  *   npm run seed -- --fresh – also delete all progress documents
  */
-require('dotenv').config({ quiet: true, path: require('path').join(__dirname, '..', '.env') })
+require('../config/env').loadEnv() // honours --production
 const mongoose = require('mongoose')
 const logger = require('../config/logger')
 const { connectDB } = require('../config/db')

@@ -37,15 +37,41 @@ The Vite dev server proxies `/api` to `:5000`, so the browser talks to a single 
 Generate a JWT secret with:
 `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
 
-### Production build
+### Production mode
+
+Production settings live in **`backend/.env.production`** (template:
+`backend/.env.production.example`). In production **only** that file is read, so
+development values can never leak in. The server refuses to start if
+`JWT_SECRET` is weak or `MONGO_URI` / `CLIENT_URL` are missing.
 
 ```bash
-cd frontend && npm run build              # creates frontend/dist
-cd ../backend && NODE_ENV=production npm start
+cd backend
+npm run seed:prod     # load / update the 8 exercises in the production database
+npm run prod          # build the frontend, then start in production mode
+# or, if the frontend is already built:
+npm run start:prod    # = node server.js --production
 ```
 
-With `NODE_ENV=production`, the API also serves `frontend/dist`. It also switches cookies to `Secure` +
-`SameSite=Strict` and logs JSON to `backend/logs/`. Serve it over HTTPS.
+Open the URL in `CLIENT_URL` (default http://localhost:5000). The API serves the
+built frontend from `frontend/dist` on the same port, so no separate frontend server is needed.
+
+The `--production` flag replaces `NODE_ENV=production`, which does not work in the
+Windows command prompt. On Linux both work.
+
+What changes in production:
+
+| | development | production |
+|---|---|---|
+| env file | `.env` | `.env.production` |
+| frontend | Vite dev server :5173 | built files served by Express |
+| auth cookie | HttpOnly, SameSite=Lax | HttpOnly, **Secure**, SameSite=**Strict** |
+| logs | coloured console + `logs/dev.log` | JSON → console, `logs/combined.log`, `logs/error.log` |
+| error details | full messages | 500 errors hidden from clients |
+| proxy | – | `trust proxy` = `TRUST_PROXY` (for Nginx/Render/Heroku) |
+
+Deploying on a server: put the app behind **HTTPS**, since Secure cookies are only sent
+over https (browsers also allow them on http://localhost). Set `CLIENT_URL` to the public
+URL. For a plain-http intranet install only, set `COOKIE_SECURE=false`.
 
 ---
 

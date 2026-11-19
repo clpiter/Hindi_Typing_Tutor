@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
+    "start:prod": "node server.js --production",
+    "build:client": "npm run build --prefix ../frontend",
+    "prod": "npm run build:client && npm run start:prod",
     "seed": "node seed/seed.js",
+    "seed:prod": "node seed/seed.js --production",
     "test": "node --test --test-concurrency=1 \"tests/**/*.test.js\""
   },
   "keywords": [],

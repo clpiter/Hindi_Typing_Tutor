@@ -1,4 +1,6 @@
-require('dotenv').config({ quiet: true })
+// must run first: the logger and everything else read process.env at load time
+const { loadEnv, assertProductionConfig } = require('./config/env')
+const envInfo = loadEnv()
 const logger = require('./config/logger')
 const { connectDB, disconnectDB } = require('./config/db')
 const { createApp } = require('./app')
@@ -12,6 +14,12 @@ process.on('unhandledRejection', (reason) => {
 })
 
 async function start() {
+  const problems = assertProductionConfig()
+  if (problems.length) {
+    problems.forEach((p) => logger.error('Configuration error: ' + p))
+    process.exit(1)
+  }
+  logger.info(`Environment: ${envInfo.mode} (${envInfo.file || 'no env file'})`)
   const port = Number(process.env.PORT) || 5000
   try {
     await connectDB()
@@ -22,6 +30,15 @@ async function start() {
   const app = createApp()
   const server = app.listen(port, () => {
     logger.info(`Hindi Typing Tutor API listening on http://localhost:${port} (${process.env.NODE_ENV || 'development'})`)
+  })
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      logger.error(`Port ${port} is already in use – stop the other server or set a different PORT`)
+    } else {
+      logger.error('Server error', { error: err.message })
+    }
+    process.exit(1)
   })
 
   const shutdown = async (signal) => {
