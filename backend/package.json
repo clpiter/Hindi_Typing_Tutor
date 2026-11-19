@@ -1,0 +1,43 @@
+{
+  "name": "hindi-typing-tutor-backend",
+  "version": "1.0.0",
+  "description": "Hindi Typing Practice Tutor – REST API (Express + MongoDB)",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "seed": "node seed/seed.js",
+    "test": "node --test --test-concurrency=1 \"tests/**/*.test.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.5",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.12.2",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "expect": "^30.5.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "logs/*",
+      "tests/*"
+    ]
+  }
+}

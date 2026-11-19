@@ -1,0 +1,197 @@
+/* ------------------------------------------------------------------
+ * Dark mode. Bootstrap components switch with <html data-bs-theme="dark">;
+ * this file switches the app's own colour tokens and the few places that
+ * use fixed colours (typing box, highlights, keyboard, completed lines).
+ * Text/background pairs were chosen for strong contrast with the thin
+ * strokes of the Kruti Dev font.
+ * ------------------------------------------------------------------ */
+[data-bs-theme='dark'] {
+  color-scheme: dark;
+  --htt-bg: #0b1220;
+  --htt-surface: #141c2f;
+  --htt-surface-2: #1b2438;
+  --htt-border: #2a3550;
+  --htt-text: #e5e7eb;
+  --htt-muted: #9aa4b6;
+  --htt-primary-50: #232a55;
+  --htt-success: #4ade80;
+  --htt-success-50: #0f2a1e;
+  --htt-danger: #f87171;
+  --htt-danger-50: #3a1717;
+  --htt-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.35);
+  --htt-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --bs-link-color: #a5b4fc;
+  --bs-link-color-rgb: 165, 180, 252;
+  --bs-link-hover-color: #c7d2fe;
+}
+
+[data-bs-theme='dark'] body {
+  background: var(--htt-bg);
+  color: var(--htt-text);
+}
+[data-bs-theme='dark'] .text-primary {
+  color: #a5b4fc !important;
+}
+[data-bs-theme='dark'] .btn-outline-primary {
+  --bs-btn-color: #a5b4fc;
+  --bs-btn-border-color: #6366f1;
+}
+[data-bs-theme='dark'] .table-soft th {
+  background: var(--htt-surface-2);
+}
+[data-bs-theme='dark'] .badge-soft-success {
+  background: #0f2a1e;
+  color: #4ade80;
+}
+[data-bs-theme='dark'] .badge-soft-warning {
+  background: #3b2a0a;
+  color: #fcd34d;
+}
+[data-bs-theme='dark'] .badge-soft-muted {
+  background: #1f2937;
+  color: #cbd5e1;
+}
+[data-bs-theme='dark'] .side-link.active {
+  color: #fff;
+}
+
+/* ---------- reference line ---------- */
+[data-bs-theme='dark'] .reference-text {
+  color: #e5e7eb;
+}
+[data-bs-theme='dark'] .ak-pending {
+  color: #cbd5e1;
+}
+[data-bs-theme='dark'] .ak-correct {
+  color: #4ade80;
+}
+[data-bs-theme='dark'] .ak-current {
+  background: #312e81;
+  color: #e0e7ff;
+}
+
+/* ---------- typing box ---------- */
+[data-bs-theme='dark'] .typing-input {
+  background: var(--htt-surface-2);
+  border-color: var(--htt-border);
+  color: var(--htt-text);
+}
+[data-bs-theme='dark'] .typing-input:focus,
+[data-bs-theme='dark'] .typing-input-wrap.has-overlay:focus-within .typing-backdrop {
+  background: #0f172a;
+}
+[data-bs-theme='dark'] .typing-input-wrap.has-overlay > textarea.typing-input {
+  background: transparent;
+  caret-color: #f9fafb;
+}
+[data-bs-theme='dark'] .typing-input::placeholder {
+  color: #64748b;
+}
+[data-bs-theme='dark'] .hl-correct {
+  color: #4ade80;
+}
+[data-bs-theme='dark'] .hl-current {
+  color: #e5e7eb;
+}
+[data-bs-theme='dark'] .hl-error {
+  color: #fecaca;
+  background: #7f1d1d;
+}
+
+/* ---------- completed lines (dark "done" theme) ---------- */
+[data-bs-theme='dark'] .typing-line.is-done {
+  background: var(--htt-surface);
+  border-left-color: #818cf8;
+}
+[data-bs-theme='dark'] .hl-done {
+  color: #e0e7ff;
+  background: #312e81;
+}
+[data-bs-theme='dark'] .hl-done-error {
+  color: #fecaca;
+  background: #5b1f1f;
+}
+[data-bs-theme='dark'] .reference-text.is-complete-ref {
+  background: #262a5c;
+}
+[data-bs-theme='dark'] .reference-text.is-complete-ref .ak {
+  color: #e0e7ff;
+}
+@keyframes doneShineDark {
+  0% { background-color: #14532d; }
+  100% { background-color: #312e81; }
+}
+[data-bs-theme='dark'] .hl.fresh.hl-done {
+  animation-name: doneShineDark;
+}
+[data-bs-theme='dark'] .line-cheer.partial {
+  background: #3b2a0a;
+  color: #fcd34d;
+  border-color: #92400e;
+}
+[data-bs-theme='dark'] .line-celebration {
+  background: var(--htt-surface);
+  border-color: #4338ca;
+}
+
+/* ---------- on-screen keyboard ---------- */
+[data-bs-theme='dark'] .vk {
+  background: linear-gradient(180deg, #1a2140, #151b33);
+  border-color: #2e3a66;
+}
+[data-bs-theme='dark'] .vk-key {
+  background: #232c43;
+  border-color: #3b4870;
+  box-shadow: 0 2px 0 #0b1020;
+  color: #cbd5e1;
+}
+[data-bs-theme='dark'] .vk-key .vk-en {
+  color: #a5b4fc;
+}
+[data-bs-theme='dark'] .vk-key .vk-shift {
+  color: #94a3b8;
+}
+[data-bs-theme='dark'] .vk-key .vk-main {
+  color: #f1f5f9;
+}
+[data-bs-theme='dark'] .vk-key.vk-practice-row {
+  background: #1e2a4a;
+  border-color: #4f5fa0;
+}
+[data-bs-theme='dark'] .vk-key.vk-pressed {
+  background: #312e81;
+}
+[data-bs-theme='dark'] .vk-key.vk-next {
+  background: #4f46e5;
+  border-color: #818cf8;
+}
+[data-bs-theme='dark'] .vk-key.vk-shift-next {
+  background: #78350f;
+  border-color: #f59e0b;
+}
+[data-bs-theme='dark'] .vk-key.vk-backspace-next {
+  background: #7f1d1d;
+  border-color: #ef4444;
+}
+[data-bs-theme='dark'] .key-cap {
+  background: #232c43;
+  border-color: #3b4870;
+  color: #c7d2fe;
+}
+
+/* sticky reference of the active line */
+[data-bs-theme='dark'] .typing-line.is-active .line-ref-row {
+  background: var(--htt-surface);
+}
+
+/* Bootstrap's "light" buttons stay white in dark mode – give them dark surfaces */
+[data-bs-theme='dark'] .btn-light {
+  --bs-btn-bg: var(--htt-surface-2);
+  --bs-btn-border-color: var(--htt-border);
+  --bs-btn-color: var(--htt-text);
+  --bs-btn-hover-bg: #26314a;
+  --bs-btn-hover-border-color: #3b4870;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #2e3a58;
+  --bs-btn-active-color: #fff;
+}
