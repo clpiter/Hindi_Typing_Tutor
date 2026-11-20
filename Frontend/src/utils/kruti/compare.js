@@ -200,8 +200,11 @@ export function detectLineEnd(reference, typedText) {
   const refWords = ref.split(/\s+/)
   const typedWords = typed.split(/\s+/)
   if (typedWords.length >= refWords.length) return { ended: true, reason: 'wordCount' }
-  const refLen = segmentAksharas(ref.replace(/\s+/g, '')).length
-  const typedLen = segmentAksharas(typed.replace(/\s+/g, '')).length
+  // count aksharas word by word: joining the words first would merge separate
+  // signs of key drills (क + ि → कि, श् + य → श्य) and end the line too early
+  const aksharaCount = (words) => words.reduce((n, w) => n + segmentAksharas(w).length, 0)
+  const refLen = aksharaCount(refWords)
+  const typedLen = aksharaCount(typedWords)
   if (typedLen >= refLen) return { ended: true, reason: 'length' }
   if (typedWords[typedWords.length - 1] === refWords[refWords.length - 1] && typedLen >= 0.7 * refLen) {
     return { ended: true, reason: 'lastWord' }

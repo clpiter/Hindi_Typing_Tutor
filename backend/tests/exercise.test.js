@@ -16,7 +16,7 @@ describe('Exercise retrieval', () => {
     expect(res.body.count).toBe(8)
     expect(res.body.exercises.map((e) => e.exerciseNumber)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     expect(res.body.exercises[0].lines).toBeUndefined()
-    expect(res.body.exercises[0].totalLines).toBe(10)
+    expect(res.body.exercises[0].totalLines).toBe(12) // 2 home-row warm-ups + 10 PDF lines
     expect(res.body.exercises[5].totalLines).toBe(13)
     expect(res.body.exercises[6].totalLines).toBe(11)
   })
@@ -25,9 +25,11 @@ describe('Exercise retrieval', () => {
     const res = await a.get('/api/exercises/number/1').expect(200)
     const ex = res.body.exercise
     expect(ex.title).toBe('होम कीज़')
-    expect(ex.lines).toHaveLength(10)
-    expect(ex.lines[1].referenceText).toBe('कह कर कस रह हक सर यह')
-    expect(ex.lines.map((l) => l.lineNumber)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    expect(ex.lines).toHaveLength(12)
+    expect(ex.lines[0].referenceText).toBe('े क ि ह श् य स ा')
+    expect(ex.lines[1].referenceText).toBe('े क ि ह ी श् य स ा र')
+    expect(ex.lines[3].referenceText).toBe('कह कर कस रह हक सर यह') // PDF line 2
+    expect(ex.lines.map((l) => l.lineNumber)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
     expect(ex.lines[0].hint).toMatch(/होम कीज़/)
   })
 

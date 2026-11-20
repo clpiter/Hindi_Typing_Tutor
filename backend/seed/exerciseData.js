@@ -47,6 +47,11 @@ const exercises = [
       ...GENERAL_INSTRUCTIONS,
     ],
     lines: [
+      // Two home-row key warm-ups placed before the PDF lines (added on request):
+      //   keys  s d f g ' ; l k      and      s d f g h ' ; l k j
+      'े क ि ह श् य स ा',
+      'े क ि ह ी श् य स ा र',
+      // PDF page 73, lines 1–10
       'कहिकि यसारीर कहिकि यसारीर कहिकि यसारीर',
       'कह कर कस रह हक सर यह',
       'कहर कसर कयास सरकार हरकारा सहारा हरा सारस यार',

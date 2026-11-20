@@ -122,3 +122,11 @@ describe('detectLineEnd', () => {
     expect(detectLineEnd('कहिकि यसारीर कहिकि यसारीर कहिकि यसारीर', 'कहिकि यसारीर')).toEqual({ ended: false })
   })
 })
+
+describe('key-drill lines (one sign per word)', () => {
+  const drill = 'े क ि ह श् य स ा'
+  test('the line does not end before its last key', () => {
+    expect(detectLineEnd(drill, 'े क ि ह श् य स')).toEqual({ ended: false })
+    expect(detectLineEnd(drill, 'े क ि ह श् य स ा')).toMatchObject({ ended: true, reason: 'exact' })
+  })
+})

@@ -34,17 +34,35 @@ import {
  *   • rakar ्र is a mark after the consonant             (प्र -> iz)
  *   • consonants without a half glyph use halant ~       (द्+म -> n~e)
  *   • ख श ष ण थ ध घ भ क्ष are half glyph + ा             (श -> 'k)
+ *   • a half letter standing alone (key drills such as "ह श् य") is its own
+ *     half key                                            (श् -> ')
  */
 export function unicodeToKruti(text = '', { mode = 'display' } = {}) {
-  const display = mode === 'display'
-  const clusters = segmentAksharas(normalizeHindi(text))
-  return clusters.map((c) => encodeCluster(c, display)).join('')
+  return unicodeToKrutiClusters(text, { mode })
+    .map((c) => c.k)
+    .join('')
 }
 
 /** Encode each akshara separately – used to colour individual aksharas */
 export function unicodeToKrutiClusters(text = '', { mode = 'display' } = {}) {
   const display = mode === 'display'
-  return segmentAksharas(normalizeHindi(text)).map((u) => ({ u, k: encodeCluster(u, display) }))
+  const clusters = segmentAksharas(normalizeHindi(text))
+  return clusters.map((u, i) => ({
+    u,
+    k: isLoneHalfLetter(clusters, i) ? HALF_CONSONANT[Array.from(u)[0]] : encodeCluster(u, display),
+  }))
+}
+
+/**
+ * A single consonant + halant that forms a whole word on its own (between spaces
+ * or at the start/end of the line) – e.g. "श्" in the home-row drill
+ * "े क ि ह श् य स ा". On the typewriter that is exactly the half-letter key.
+ */
+function isLoneHalfLetter(clusters, i) {
+  const chars = Array.from(clusters[i])
+  if (chars.length !== 2 || chars[1] !== VIRAMA || !HALF_CONSONANT[chars[0]]) return false
+  const isBoundary = (c) => c === undefined || /^\s+$/.test(c)
+  return isBoundary(clusters[i - 1]) && isBoundary(clusters[i + 1])
 }
 
 function parseConsonantCluster(chars) {

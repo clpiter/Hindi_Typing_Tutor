@@ -211,3 +211,15 @@ describe('KRDV010.TTF font', () => {
     expect(missing).toEqual([])
   })
 })
+
+describe('home-row key drills', () => {
+  test('a half letter standing alone is its own half key', () => {
+    expect(unicodeToKruti('े क ि ह श् य स ा', { mode: 'typable' })).toBe("s d f g ' ; l k")
+    expect(unicodeToKruti('े क ि ह ी श् य स ा र', { mode: 'typable' })).toBe("s d f g h ' ; l k j")
+    expect(krutiToUnicode("s d f g ' ; l k")).toBe(normalizeHindi('े क ि ह श् य स ा'))
+  })
+  test('inside a word a trailing halant is unchanged', () => {
+    expect(unicodeToKruti('महान्', { mode: 'typable' })).toBe('egku~')
+    expect(unicodeToKruti('पश्चात् अपराह्न', { mode: 'typable' })).toBe("i'pkr~ vijkg~u")
+  })
+})

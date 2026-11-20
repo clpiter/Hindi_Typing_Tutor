@@ -47,7 +47,19 @@ function lineDifficulty(text) {
   return 'easy'
 }
 
+/** A key drill: every "word" is one sign = one key (e.g. "े क ि ह श् य स ा") */
+function isKeyDrill(text) {
+  return text.trim().split(/\s+/).every((w) => Array.from(w).length <= 2)
+}
+
 function buildHint(text, exercise) {
+  if (isKeyDrill(text)) {
+    return [
+      `यह ${ROW_TEXT[exercise.keyboardRow]} का कुँजी-अभ्यास है: हर चिह्न एक कुँजी है, हर कुँजी के बाद Space दबाएँ।`,
+      'उंगलियाँ होम कीज़ पर रखें — बायाँ हाथ A S D F, दायाँ हाथ J K L ;। G और H के लिए तर्जनी को थोड़ा खिसकाएँ।',
+      'Shift के बिना: s = े, d = क, f = ि, g = ह, h = ी, j = र, k = ा, l = स, ; = य, \' = श्।',
+    ].join(' ')
+  }
   const parts = [`इस पंक्ति में ${ROW_TEXT[exercise.keyboardRow]} का अभ्यास है।`]
   if (exercise.shiftPractice) {
     parts.push('दाएँ हाथ के अक्षरों के लिए बाईं Shift तथा बाएँ हाथ के अक्षरों के लिए दाईं Shift दबाएँ।')
