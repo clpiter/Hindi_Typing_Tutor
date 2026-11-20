@@ -252,7 +252,7 @@ function LineTypingBox({
   }, [raw, tryFinish, isDone, hasNext, onGoNext, ln])
 
   /**
-   * Bring this line (reference + box) into view below the sticky header.
+   * Bring this line (reference + box) into view below the sticky top navigation bar.
    * Runs two frames later: the box that lost focus shrinks back first, which moves
    * everything below it up; scrolling before that would leave this line hidden.
    */
@@ -260,8 +260,8 @@ function LineTypingBox({
     const run = () => {
       const card = document.getElementById(`line-${ln}`)
       if (!card) return
-      const header = document.querySelector('[data-testid=practice-header]')
-      const headerBottom = header ? header.getBoundingClientRect().bottom : 0
+      const navbar = document.querySelector('.app-navbar')
+      const headerBottom = navbar ? navbar.getBoundingClientRect().bottom : 0
       const top = card.getBoundingClientRect().top
       // instant (not smooth) so fast typing cannot interrupt it
       if (top < headerBottom + 8 || top > window.innerHeight * 0.6) {

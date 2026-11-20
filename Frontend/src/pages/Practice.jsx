@@ -312,18 +312,6 @@ export default function Practice() {
 
   useEffect(() => () => clearTimeout(draftTimer.current), [])
 
-  // the sticky reference of the active line sits right below the sticky header,
-  // whose height changes with the screen width – keep a CSS variable in sync
-  useEffect(() => {
-    const el = document.querySelector('[data-testid=practice-header]')
-    if (!el || typeof ResizeObserver === 'undefined') return undefined
-    const apply = () => document.documentElement.style.setProperty('--practice-header-h', `${Math.round(el.getBoundingClientRect().height)}px`)
-    apply()
-    const ro = new ResizeObserver(apply)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [exercise?._id, loadingProgress])
-
   const session = useMemo(() => aggregateResults(lineResults), [lineResults])
 
   if (!number) return <Loader label="Finding where you left off…" />
@@ -335,7 +323,7 @@ export default function Practice() {
 
   return (
     <div className="pb-5">
-      {/* sticky header: exercise title + toolbar stay at the top while scrolling */}
+      {/* exercise header: title + toolbar (scrolls with the page) */}
       <div className="card-soft practice-toolbar mb-3" data-testid="practice-header">
         <ExerciseDisplay exercise={exercise} part="header" />
         <div className="d-flex flex-wrap align-items-center gap-3 mt-2">

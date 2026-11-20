@@ -172,7 +172,7 @@ never completes a line.
 * **Enter** always moves the cursor to the next line of the box. On an empty line it moves to the next exercise line.
 * **5 perfect repetitions in a row** move the cursor to the next line automatically.
 * A perfect line plays a "✓ शाबाश!" animation plus likes and sound. A line finished with mistakes shows an amber notice.
-* The reference text of the line being typed stays visible (sticky) below the header while you scroll.
+* The reference text of the line being typed stays visible (sticky) below the top navigation bar while you scroll; the exercise header itself scrolls away with the page.
 * The box grows to 7 lines while it has focus and shrinks again afterwards.
 
 **Shortcuts** on the practice page: `Alt+H` hint · `Alt+R` reset line · `Alt+N` / `Alt+P` next / previous exercise ·

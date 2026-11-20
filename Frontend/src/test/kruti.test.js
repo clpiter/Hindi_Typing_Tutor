@@ -215,7 +215,7 @@ describe('KRDV010.TTF font', () => {
 describe('home-row key drills', () => {
   test('a half letter standing alone is its own half key', () => {
     expect(unicodeToKruti('े क ि ह श् य स ा', { mode: 'typable' })).toBe("s d f g ' ; l k")
-    expect(unicodeToKruti('े क ि ह ी श् य स ा र', { mode: 'typable' })).toBe("s d f g h ' ; l k j")
+    expect(unicodeToKruti('ं े क ि ह ी श् य स ा र', { mode: 'typable' })).toBe("a s d f g h ' ; l k j")
     expect(krutiToUnicode("s d f g ' ; l k")).toBe(normalizeHindi('े क ि ह श् य स ा'))
   })
   test('inside a word a trailing halant is unchanged', () => {

@@ -15,11 +15,10 @@
 }
 
 /* ---------- practice page ---------- */
+/* exercise header + toolbar: scrolls away with the page (not sticky) */
 .practice-toolbar {
-  position: sticky;
+  position: static;
   background: var(--htt-surface);
-  top: calc(var(--htt-navbar-h) + 0.5rem);
-  z-index: 20;
   padding: 0.75rem 1rem;
 }
 .metric {
@@ -43,8 +42,8 @@
   margin-bottom: 1rem;
   border-left: 4px solid transparent;
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
-  /* leave room for the sticky navbar + exercise header */
-  scroll-margin-top: 250px;
+  /* leave room for the sticky top navigation bar */
+  scroll-margin-top: calc(var(--htt-navbar-h) + 16px);
 }
 .typing-line.is-active {
   border-left-color: var(--htt-primary);
@@ -334,16 +333,12 @@
   .keyboard-dock {
     position: static;
   }
-  /* the exercise header stays visible on phones too, just more compact */
+  /* the exercise header is more compact on phones */
   .practice-toolbar {
-    top: var(--htt-navbar-h);
     padding: 0.5rem 0.75rem;
   }
   .practice-toolbar .metric {
     min-width: 60px;
-  }
-  .typing-line {
-    scroll-margin-top: 330px;
   }
   .vk {
     padding: 0.4rem;
@@ -475,11 +470,11 @@
   text-underline-offset: 5px;
 }
 
-/* active line: its reference text sticks below the practice header while the
-   learner scrolls through the (growing) typing box */
+/* active line: its reference text sticks just below the top navigation bar while
+   the learner scrolls through the (growing) typing box */
 .typing-line.is-active .line-ref-row {
   position: sticky;
-  top: calc(var(--htt-navbar-h) + var(--practice-header-h, 140px) + 14px);
+  top: calc(var(--htt-navbar-h) + 8px);
   z-index: 6;
   background: var(--htt-surface);
   margin: -0.35rem -0.6rem 0.25rem;

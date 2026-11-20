@@ -57,7 +57,7 @@ function buildHint(text, exercise) {
     return [
       `यह ${ROW_TEXT[exercise.keyboardRow]} का कुँजी-अभ्यास है: हर चिह्न एक कुँजी है, हर कुँजी के बाद Space दबाएँ।`,
       'उंगलियाँ होम कीज़ पर रखें — बायाँ हाथ A S D F, दायाँ हाथ J K L ;। G और H के लिए तर्जनी को थोड़ा खिसकाएँ।',
-      'Shift के बिना: s = े, d = क, f = ि, g = ह, h = ी, j = र, k = ा, l = स, ; = य, \' = श्।',
+      'Shift के बिना: a = ं, s = े, d = क, f = ि, g = ह, h = ी, j = र, k = ा, l = स, ; = य, \' = श्।',
     ].join(' ')
   }
   const parts = [`इस पंक्ति में ${ROW_TEXT[exercise.keyboardRow]} का अभ्यास है।`]

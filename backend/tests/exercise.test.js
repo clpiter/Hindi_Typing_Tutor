@@ -27,7 +27,7 @@ describe('Exercise retrieval', () => {
     expect(ex.title).toBe('होम कीज़')
     expect(ex.lines).toHaveLength(12)
     expect(ex.lines[0].referenceText).toBe('े क ि ह श् य स ा')
-    expect(ex.lines[1].referenceText).toBe('े क ि ह ी श् य स ा र')
+    expect(ex.lines[1].referenceText).toBe('ं े क ि ह ी श् य स ा र')
     expect(ex.lines[3].referenceText).toBe('कह कर कस रह हक सर यह') // PDF line 2
     expect(ex.lines.map((l) => l.lineNumber)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
     expect(ex.lines[0].hint).toMatch(/होम कीज़/)
