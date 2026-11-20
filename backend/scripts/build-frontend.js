@@ -7,17 +7,17 @@
  * On a developer machine it does nothing.
  */
 const { execSync } = require('child_process')
-const path = require('path')
-const fs = require('fs')
+const { findFrontendDir } = require('../utils/paths')
 
 const shouldBuild = process.env.RENDER === 'true' || process.env.BUILD_FRONTEND === 'true'
 if (!shouldBuild) process.exit(0)
 
-const frontend = path.join(__dirname, '..', '..', 'frontend')
-if (!fs.existsSync(path.join(frontend, 'package.json'))) {
-  console.log('[build-frontend] frontend/ not found – skipping')
-  process.exit(0)
+const frontend = findFrontendDir() // "frontend" or "Frontend" (Linux is case-sensitive)
+if (!frontend) {
+  console.error('[build-frontend] frontend folder not found next to backend/ – cannot build the website')
+  process.exit(1)
 }
+console.log(`[build-frontend] building ${frontend}`)
 
 const run = (cmd) => {
   console.log(`[build-frontend] ${cmd}`)

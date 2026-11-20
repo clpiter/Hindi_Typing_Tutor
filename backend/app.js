@@ -13,6 +13,7 @@ const exerciseRoutes = require('./routes/exerciseRoutes')
 const progressRoutes = require('./routes/progressRoutes')
 const { csrfProtection } = require('./middleware/csrfMiddleware')
 const { notFound, errorHandler } = require('./middleware/errorMiddleware')
+const { findFrontendDir } = require('./utils/paths')
 
 function createApp() {
   const app = express()
@@ -73,11 +74,14 @@ function createApp() {
   app.use('/api', notFound)
 
   // In production the built frontend can be served by the API server
-  const dist = path.join(__dirname, '..', 'frontend', 'dist')
-  if (isProd && fs.existsSync(dist)) {
+  const frontendDir = findFrontendDir()
+  const dist = frontendDir && path.join(frontendDir, 'dist')
+  if (isProd && dist && fs.existsSync(path.join(dist, 'index.html'))) {
     app.use(express.static(dist, { maxAge: '7d', index: false }))
     app.get(/^(?!\/api).*/, (req, res) => res.sendFile(path.join(dist, 'index.html')))
     logger.info('Serving frontend build from ' + dist)
+  } else if (isProd) {
+    logger.warn(`No frontend build found (${dist || 'frontend folder missing'}) – only the API is served. Run "npm run build" in the frontend folder.`)
   }
 
   app.use(notFound)

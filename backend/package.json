@@ -7,7 +7,7 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "start:prod": "node server.js --production",
-    "build:client": "npm run build --prefix ../frontend",
+    "build:client": "node -e \"process.env.BUILD_FRONTEND='true';require('./scripts/build-frontend.js')\"",
     "prod": "npm run build:client && npm run start:prod",
     "seed": "node seed/seed.js",
     "seed:prod": "node seed/seed.js --production",

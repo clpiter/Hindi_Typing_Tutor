@@ -1,6 +1,6 @@
 # Render deployment (Blueprint). Two services:
 #
-#  1. hindi-typing-tutor-api       – Node Web Service: the REST API. It also serves
+#  1. hindi-typing-tutor           – Node Web Service: the REST API. It also serves
 #                                    the built website itself, so this service ALONE
 #                                    is a complete deployment.
 #  2. hindi-typing-tutor-frontend  – Static Site: the website on its own domain.
@@ -10,12 +10,11 @@
 #
 # If you created the services by hand in the dashboard, apply the same settings there
 # (Static Site → Redirects/Rewrites; Web Service → Environment).
-# Replace "hindi-typing-tutor-api" in the rewrite destination with your API service's
-# real onrender.com host name.
+# The rewrite destination is the API service: https://hindi-typing-tutor.onrender.com
 
 services:
   - type: web
-    name: hindi-typing-tutor-api
+    name: hindi-typing-tutor
     runtime: node
     rootDir: backend
     buildCommand: npm install          # postinstall also builds frontend/dist on Render
@@ -29,19 +28,19 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL                # every public URL that opens the site, comma-separated
-        value: https://hindi-typing-tutor-frontend.onrender.com,https://hindi-typing-tutor-api.onrender.com
+        value: https://hindi-typing-tutor-frontend.onrender.com,https://hindi-typing-tutor.onrender.com
 
   - type: web
     name: hindi-typing-tutor-frontend
     runtime: static
-    rootDir: frontend
+    rootDir: Frontend                  # folder name as committed in git (Linux is case-sensitive)
     buildCommand: npm install --include=dev && npm run build
     staticPublishPath: dist
     routes:
       # the API is proxied, so cookies stay first-party (no cross-site cookie problems)
       - type: rewrite
         source: /api/*
-        destination: https://hindi-typing-tutor-api.onrender.com/api/*
+        destination: https://hindi-typing-tutor.onrender.com/api/*
       # single-page app: every other path (/login, /practice/3 …) loads index.html
       - type: rewrite
         source: /*
