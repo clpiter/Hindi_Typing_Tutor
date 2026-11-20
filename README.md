@@ -21,7 +21,7 @@ Prerequisites: **Node.js ≥ 20** and **MongoDB** running on `mongodb://127.0.0.
 # 1) backend
 cd backend
 npm install
-cp .env.example .env          # then put a long random value in JWT_SECRET
+# create backend/.env (see "Environment files" below)
 npm run seed                  # loads the 8 PDF exercises (84 lines) into MongoDB
 npm run dev                   # http://localhost:5000
 
@@ -34,15 +34,39 @@ npm run dev                   # http://localhost:5173
 Open http://localhost:5173, register, and you are taken to the dashboard.
 The Vite dev server proxies `/api` to `:5000`, so the browser talks to a single origin.
 
+### Environment files
+
+There are exactly two env files, both in `backend/`, and both are git-ignored
+(never committed, because they contain the database password and the JWT secret):
+
+| file | used by | content |
+|---|---|---|
+| `.env` | `npm run dev`, `npm start`, `npm run seed` | development settings |
+| `.env.production` | `npm run prod`, `npm run start:prod`, `npm run seed:prod` | production settings |
+
+Variables:
+
+```ini
+NODE_ENV=development            # production in .env.production
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/hindi_typing_tutor   # or your Atlas URI
+JWT_SECRET=<long random value>  # different in development and production
+JWT_EXPIRES_IN=1d
+CLIENT_URL=http://localhost:5173  # production: the public URL of the site
+# production only (optional): COOKIE_SECURE=true, TRUST_PROXY=1, LOG_LEVEL=info,
+# AUTH_RATE_LIMIT=20, API_RATE_LIMIT=1000, BCRYPT_ROUNDS=12
+```
+
 Generate a JWT secret with:
 `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
 
 ### Production mode
 
-Production settings live in **`backend/.env.production`** (template:
-`backend/.env.production.example`). In production **only** that file is read, so
-development values can never leak in. The server refuses to start if
-`JWT_SECRET` is weak or `MONGO_URI` / `CLIENT_URL` are missing.
+Production settings live in **`backend/.env.production`**. In production **only**
+that file is read, so development values can never leak in. On a hosting platform
+the file is not deployed; the same variables are set in the platform's
+dashboard instead (see *Deploy on Render*). The server refuses to start, and lists
+what is missing, if `JWT_SECRET` is weak or `MONGO_URI` / `CLIENT_URL` are not set.
 
 ```bash
 cd backend
@@ -72,6 +96,32 @@ What changes in production:
 Deploying on a server: put the app behind **HTTPS**, since Secure cookies are only sent
 over https (browsers also allow them on http://localhost). Set `CLIENT_URL` to the public
 URL. For a plain-http intranet install only, set `COOKIE_SECURE=false`.
+
+### Deploy on Render
+
+One **Web Service** runs the API and serves the website.
+
+| setting | value |
+|---|---|
+| Root Directory | `backend` |
+| Build Command | `npm install` (on Render, a postinstall step also builds `frontend/dist`) |
+| Start Command | `node server.js` |
+
+**Environment** (Render dashboard → Environment), with the same values as `backend/.env.production`:
+
+| key | value |
+|---|---|
+| `NODE_ENV` | `production` |
+| `MONGO_URI` | your MongoDB Atlas connection string |
+| `JWT_SECRET` | a long random value |
+| `CLIENT_URL` | `https://<your-service>.onrender.com` |
+
+Optional keys: `COOKIE_SECURE`, `TRUST_PROXY`, `LOG_LEVEL`, `AUTH_RATE_LIMIT`, `API_RATE_LIMIT`,
+`BCRYPT_ROUNDS`. Do **not** set `PORT`, because Render provides it.
+
+In MongoDB Atlas, open **Network Access** and allow Render to connect (`0.0.0.0/0`, or
+Render's outbound IPs). Load the exercises once with `npm run seed:prod` from your PC,
+which uses the same database.
 
 ---
 

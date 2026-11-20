@@ -11,7 +11,7 @@ const secureCookies = () => isProd() && process.env.COOKIE_SECURE !== 'false'
 function getSecret() {
   const secret = process.env.JWT_SECRET
   if (!secret || secret.length < 16) {
-    throw new Error('JWT_SECRET must be set to a long random string (see .env.example)')
+    throw new Error('JWT_SECRET must be set to a long random string (backend/.env or backend/.env.production)')
   }
   return secret
 }

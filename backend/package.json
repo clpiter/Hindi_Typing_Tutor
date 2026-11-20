@@ -11,7 +11,8 @@
     "prod": "npm run build:client && npm run start:prod",
     "seed": "node seed/seed.js",
     "seed:prod": "node seed/seed.js --production",
-    "test": "node --test --test-concurrency=1 \"tests/**/*.test.js\""
+    "test": "node --test --test-concurrency=1 \"tests/**/*.test.js\"",
+    "postinstall": "node scripts/build-frontend.js"
   },
   "keywords": [],
   "author": "",

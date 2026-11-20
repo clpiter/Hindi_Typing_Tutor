@@ -5,7 +5,7 @@ const logger = require('./logger')
 const safeUri = (uri) => uri.replace(/\/\/([^@/]+)@/, '//***@')
 
 async function connectDB(uri = process.env.MONGO_URI) {
-  if (!uri) throw new Error('MONGO_URI is not defined. Copy backend/.env.example to backend/.env')
+  if (!uri) throw new Error('MONGO_URI is not defined – set it in backend/.env (development) or backend/.env.production / the hosting environment (production)')
   mongoose.set('strictQuery', true)
 
   mongoose.connection.on('disconnected', () => logger.warn('MongoDB disconnected'))
