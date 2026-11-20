@@ -1,0 +1,48 @@
+# Render deployment (Blueprint). Two services:
+#
+#  1. hindi-typing-tutor-api       – Node Web Service: the REST API. It also serves
+#                                    the built website itself, so this service ALONE
+#                                    is a complete deployment.
+#  2. hindi-typing-tutor-frontend  – Static Site: the website on its own domain.
+#                                    It needs the two rewrite rules below:
+#                                      /api/*  → the API service (proxied, same origin)
+#                                      /*      → /index.html (React routes like /login)
+#
+# If you created the services by hand in the dashboard, apply the same settings there
+# (Static Site → Redirects/Rewrites; Web Service → Environment).
+# Replace "hindi-typing-tutor-api" in the rewrite destination with your API service's
+# real onrender.com host name.
+
+services:
+  - type: web
+    name: hindi-typing-tutor-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install          # postinstall also builds frontend/dist on Render
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false                    # enter your MongoDB Atlas connection string
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL                # every public URL that opens the site, comma-separated
+        value: https://hindi-typing-tutor-frontend.onrender.com,https://hindi-typing-tutor-api.onrender.com
+
+  - type: web
+    name: hindi-typing-tutor-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install --include=dev && npm run build
+    staticPublishPath: dist
+    routes:
+      # the API is proxied, so cookies stay first-party (no cross-site cookie problems)
+      - type: rewrite
+        source: /api/*
+        destination: https://hindi-typing-tutor-api.onrender.com/api/*
+      # single-page app: every other path (/login, /practice/3 …) loads index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html

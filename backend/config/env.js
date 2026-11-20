@@ -41,6 +41,9 @@ function assertProductionConfig() {
   const secret = process.env.JWT_SECRET || ''
   if (secret.length < 32 || /replace_with/i.test(secret)) problems.push(`JWT_SECRET must be a long random value (≥ 32 characters) – ${where}`)
   if (!process.env.MONGO_URI) problems.push(`MONGO_URI is not set – ${where}`)
+  const sameSite = (process.env.COOKIE_SAMESITE || 'strict').toLowerCase()
+  if (!['strict', 'lax', 'none'].includes(sameSite)) problems.push('COOKIE_SAMESITE must be strict, lax or none')
+  if (sameSite === 'none' && process.env.COOKIE_SECURE === 'false') problems.push('COOKIE_SAMESITE=none needs COOKIE_SECURE=true (HTTPS)')
   if (!process.env.CLIENT_URL) problems.push(`CLIENT_URL is not set (the public URL of the site, e.g. https://your-app.onrender.com) – ${where}`)
   return problems
 }

@@ -39,9 +39,11 @@ function verifyToken(token) {
 function cookieBase() {
   return {
     secure: secureCookies(),
-    // Strict in production (same-site deployment); Lax in development so the Vite
-    // dev server proxy and direct localhost access both work.
-    sameSite: isProd() ? 'strict' : 'lax',
+    // Production: Strict (site and API on the same domain). Set COOKIE_SAMESITE=none
+    // only when the frontend is on a different domain than the API (cross-site
+    // requests); that also requires Secure cookies (HTTPS).
+    // Development: Lax, so the Vite dev server proxy and direct localhost access work.
+    sameSite: isProd() ? (process.env.COOKIE_SAMESITE || 'strict').toLowerCase() : 'lax',
     path: '/',
   }
 }

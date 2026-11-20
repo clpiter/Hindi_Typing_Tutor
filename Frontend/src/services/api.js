@@ -5,26 +5,36 @@ import { getCookie } from '../utils/cookies.js'
  * Axios instance for the REST API.
  *  - withCredentials: the JWT lives in an HTTP-only cookie the browser sends itself;
  *    the token is never readable from JavaScript and never stored in localStorage.
- *  - CSRF: the server sets a readable `csrf_token` cookie; we echo it in the
- *    X-CSRF-Token header on every state-changing request (double-submit cookie).
+ *  - CSRF: the server sets a `csrf_token` cookie and also returns the token from
+ *    GET /api/auth/csrf; we echo it in the X-CSRF-Token header on every
+ *    state-changing request (double-submit cookie).
+ *  - API location: '/api' on the same site (served by Express, or proxied by a
+ *    hosting rewrite rule). Set VITE_API_URL (e.g. https://my-api.onrender.com/api)
+ *    at build time only when the frontend calls an API on another domain.
  */
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
   withCredentials: true,
-  timeout: 15000,
+  timeout: 20000,
   headers: { 'Content-Type': 'application/json' },
 })
 
+// When the API is on another domain, its csrf_token cookie cannot be read with
+// document.cookie, so the token from the /auth/csrf response is kept in memory.
+let csrfToken = null
 let csrfPromise = null
 export async function ensureCsrf() {
-  if (getCookie('csrf_token')) return getCookie('csrf_token')
+  const fromCookie = getCookie('csrf_token')
+  if (fromCookie) return fromCookie
+  if (csrfToken) return csrfToken
   if (!csrfPromise) {
     csrfPromise = api.get('/auth/csrf').finally(() => {
       csrfPromise = null
     })
   }
   const res = await csrfPromise
-  return getCookie('csrf_token') || res.data.csrfToken
+  csrfToken = res.data?.csrfToken || null
+  return getCookie('csrf_token') || csrfToken
 }
 
 api.interceptors.request.use(async (config) => {
@@ -49,6 +59,7 @@ api.interceptors.response.use(
     if (response?.status === 403 && /csrf/i.test(response.data?.message || '') && !config._csrfRetry) {
       config._csrfRetry = true
       document.cookie = 'csrf_token=; Max-Age=0; path=/'
+      csrfToken = null
       await ensureCsrf()
       return api(config)
     }
@@ -65,6 +76,10 @@ export function getErrorMessage(error, fallback = 'Something went wrong. Please 
   if (error.response) {
     const { data, status } = error.response
     if (data?.message) return data.message
+    // a non-JSON 404 means the request never reached our API server
+    if (status === 404 && typeof data !== 'object') {
+      return 'Cannot reach the API server (404). The website is not connected to the backend – check the /api rewrite rule or VITE_API_URL.'
+    }
     if (status >= 500) return 'Server error. Please try again later. (सर्वर त्रुटि)'
     return fallback
   }

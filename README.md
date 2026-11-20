@@ -99,29 +99,45 @@ URL. For a plain-http intranet install only, set `COOKIE_SECURE=false`.
 
 ### Deploy on Render
 
-One **Web Service** runs the API and serves the website.
+`render.yaml` (repository root) describes both services. You can use it as a Render
+Blueprint, or copy its settings into services created by hand.
+
+**A. One Web Service (simplest, recommended).** The API serves the website too.
 
 | setting | value |
 |---|---|
 | Root Directory | `backend` |
 | Build Command | `npm install` (on Render, a postinstall step also builds `frontend/dist`) |
 | Start Command | `node server.js` |
+| Health Check Path | `/api/health` |
 
-**Environment** (Render dashboard → Environment), with the same values as `backend/.env.production`:
+Environment, with the same values as `backend/.env.production`: `NODE_ENV=production`,
+`MONGO_URI`, `JWT_SECRET`, and `CLIENT_URL=https://<api-service>.onrender.com`. Do not
+set `PORT`; Render provides it. Open `https://<api-service>.onrender.com`.
 
-| key | value |
-|---|---|
-| `NODE_ENV` | `production` |
-| `MONGO_URI` | your MongoDB Atlas connection string |
-| `JWT_SECRET` | a long random value |
-| `CLIENT_URL` | `https://<your-service>.onrender.com` |
+**B. Separate Static Site for the website** (e.g. `hindi-typing-tutor-frontend`), in
+addition to the Web Service from A. A static site only serves files, so it needs **two
+rewrite rules** (Static Site → *Redirects/Rewrites*, in this order):
 
-Optional keys: `COOKIE_SECURE`, `TRUST_PROXY`, `LOG_LEVEL`, `AUTH_RATE_LIMIT`, `API_RATE_LIMIT`,
-`BCRYPT_ROUNDS`. Do **not** set `PORT`, because Render provides it.
+| Source | Destination | Action |
+|---|---|---|
+| `/api/*` | `https://<api-service>.onrender.com/api/*` | Rewrite |
+| `/*` | `/index.html` | Rewrite |
 
-In MongoDB Atlas, open **Network Access** and allow Render to connect (`0.0.0.0/0`, or
-Render's outbound IPs). Load the exercises once with `npm run seed:prod` from your PC,
-which uses the same database.
+Without the first rule, `/api/auth/csrf` and `/api/auth/me` return 404 "Not Found".
+Without the second, opening `/login` or refreshing any page returns 404. With the
+proxy rule the browser sees one domain, so the cookies stay first-party. Static Site
+settings: Root Directory `frontend`, Build Command `npm install --include=dev && npm run build`,
+Publish Directory `dist`. On the Web Service, add the static site's URL to `CLIENT_URL`
+(comma-separated).
+
+*Alternative to the proxy rule:* build the static site with
+`VITE_API_URL=https://<api-service>.onrender.com/api` and set `COOKIE_SAMESITE=none` on
+the Web Service. The login cookie is then a cross-site cookie, which some browsers
+(Safari, strict tracking protection) block, so the proxy rule is preferred.
+
+**MongoDB Atlas:** open **Network Access** and allow Render to connect (`0.0.0.0/0` or
+Render's outbound IPs). Load the exercises once with `npm run seed:prod` from your PC.
 
 ---
 
